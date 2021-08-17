@@ -8,15 +8,15 @@
 ;// 的地方，然后在被缓冲块覆盖掉之前由保护模式的system 读取。
 
 ;// 以下这些参数最好和bootsect.s 中的相同！
- INITSEG  = 9000h	;// 原来bootsect 所处的段
- SYSSEG   = 1000h	;// system 在10000(64k)处。
- SETUPSEG = 9020h	;// 本程序所在的段地址。
+INITSEG  = 9000h	;// 原来bootsect 所处的段
+SYSSEG   = 1000h	;// system 在10000(64k)处。
+SETUPSEG = 9020h	;// 本程序所在的段地址。
 
 
 code segment
 start:
 
-;// ok, 整个读磁盘过程都正常，现在将光标位置保存以备今后使用。
+; ok, 整个读磁盘过程都正常，现在将光标位置保存以备今后使用。
 
 	mov	ax,INITSEG		;// 将ds 置成INITSEG(9000)。这已经在bootsect 程序中
 	mov	ds,ax			;// 设置过，但是现在是setup 程序，Linus 觉得需要再重新
@@ -28,7 +28,7 @@ start:
 					;// 将光标位置信息存放在90000 处，控制台初始化时会来取。
 	mov	ah,88h		;// 这3句取扩展内存的大小值（KB）。
 	int	15h			;// 是调用中断15，功能号ah = 88
-	mov	ds:[2],ax		;// 返回：ax = 从100000（1M）处开始的扩展内存大小(KB)。
+	mov	ds:[2],ax	;// 返回：ax = 从100000（1M）处开始的扩展内存大小(KB)。
 					;// 若出错则CF 置位，ax = 出错码。
 
 ;// 下面这段用于取显示卡当前显示模式。
