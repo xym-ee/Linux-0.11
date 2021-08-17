@@ -226,21 +226,27 @@ type name(atype a,btype b) \
 	errno = -__res; 	/* 否则置出错号，并返回-1。*/\
 	return -1; \
 }
-/*#define _syscall2(type,name,atype,a,btype,b) \
-type name(atype a,btype b) \
-{ \
-long __res; \
-__asm__ volatile ("int $0x80" \
-	: "=a" (__res) \
-	: "0" (__NR_##name),"b" ((long)(a)),"c" ((long)(b))); \
-if (__res >= 0) \
-	return (type) __res; \
-errno = -__res; \
-return -1; \
-}*/
+
+
+
+// #define _syscall2(type,name,atype,a,btype,b) \
+// type name(atype a,btype b) \
+// { \
+// long __res; \
+// __asm__ volatile ("int $0x80" \
+// 	: "=a" (__res) \
+// 	: "0" (__NR_##name),"b" ((long)(a)),"c" ((long)(b))); \
+// if (__res >= 0) \
+// 	return (type) __res; \
+// errno = -__res; \
+// return -1; \
+// }
 
 // 有3 个参数的系统调用宏函数。type name(atype a, btype b, ctype c)
 // %0 - eax(__res)，%1 - eax(__NR_name)，%2 - ebx(a)，%3 - ecx(b)，%4 - edx(c)。
+
+
+/* 3个参数，带参宏 */
 #define _syscall3(type,name,atype,a,btype,b,ctype,c) \
 type name(atype a,btype b,ctype c) \
 { \
