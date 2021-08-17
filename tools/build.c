@@ -29,13 +29,37 @@
 #include <unistd.h>	/* contains read/write */
 #include <fcntl.h>
 
+/*
+ * Changes by falcon<zhangjinw@gmail.com> to define MAJOR and MINOR for they
+ * are not defined in current linux header file linux/fs.h,I copy it from
+ * include/linux/fs.h directly.
+ */
+
+#ifndef MAJOR
+	#define MAJOR(a) (((unsigned)(a))>>8)
+#endif
+#ifndef MINOR
+	#define MINOR(a) ((a)&0xff)
+#endif
+
 #define MINIX_HEADER 32
 #define GCC_HEADER 1024
 
 #define SYS_SIZE 0x3000
 
-#define DEFAULT_MAJOR_ROOT 2
-#define DEFAULT_MINOR_ROOT 0x1d
+/*
+ * Changes by falcon<zhangjinw@gmail.com> to let this kernel Image file boot
+ * with a root image file on the first hardware device /dev/hd1, hence, you
+ * should prepare a root image file, and configure the bochs with
+ * the following lines(please set the ... as suitable info):
+ * 	...
+ *      floppya: 1_44="Image", status=inserted
+ *      ata0-master: type=disk, path="/path/to/rootimage.img", mode=flat ...
+ *      ...
+ */
+
+#define DEFAULT_MAJOR_ROOT 3
+#define DEFAULT_MINOR_ROOT 1
 
 /* max nr of sectors of setup: don't change unless you also change
  * bootsect etc */

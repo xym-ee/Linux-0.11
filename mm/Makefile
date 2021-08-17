@@ -1,10 +1,11 @@
-CC	=gcc
-CFLAGS	=-O -Wall -fstrength-reduce -fcombine-regs -fomit-frame-pointer \
+CC	=gcc-3.4 -march=i386
+CFLAGS	=-m32 -g -Wall -O -fstrength-reduce -fomit-frame-pointer \
 	-finline-functions -nostdinc -I../include
-AS	=gas
-AR	=gar
-LD	=gld
-CPP	=gcc -E -nostdinc -I../include
+AS	=as --32
+AR	=ar
+LD	=ld
+LDFLAGS =-m elf_i386
+CPP	=gcc-3.4 -E -nostdinc -I../include
 
 .c.o:
 	$(CC) $(CFLAGS) \
@@ -20,7 +21,7 @@ OBJS	= memory.o page.o
 all: mm.o
 
 mm.o: $(OBJS)
-	$(LD) -r -o mm.o $(OBJS)
+	$(LD) -m elf_i386 -r -o mm.o $(OBJS)
 
 clean:
 	rm -f core *.o *.a tmp_make
@@ -32,6 +33,7 @@ dep:
 	cp tmp_make Makefile
 
 ### Dependencies:
-memory.o : memory.c ../include/signal.h ../include/sys/types.h \
-  ../include/asm/system.h ../include/linux/sched.h ../include/linux/head.h \
-  ../include/linux/fs.h ../include/linux/mm.h ../include/linux/kernel.h 
+memory.o: memory.c ../include/signal.h ../include/sys/types.h \
+  ../include/asm/system.h ../include/linux/sched.h \
+  ../include/linux/head.h ../include/linux/fs.h ../include/linux/mm.h \
+  ../include/linux/kernel.h
