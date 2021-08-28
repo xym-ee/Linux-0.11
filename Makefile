@@ -28,103 +28,103 @@ MATH	=kernel/math/math.a
 LIBS	=lib/lib.a
 
 .c.s:
-	$(CC) $(CFLAGS) \
-	-nostdinc -Iinclude -S -o $*.s $<
+    $(CC) $(CFLAGS) \
+    -nostdinc -Iinclude -S -o $*.s $<
 .s.o:
-	$(AS)  -o $*.o $<
+    $(AS)  -o $*.o $<
 .c.o:
-	$(CC) $(CFLAGS) \
-	-nostdinc -Iinclude -c -o $*.o $<
+    $(CC) $(CFLAGS) \
+    -nostdinc -Iinclude -c -o $*.o $<
 
 all:	Image
 
 Image: boot/bootsect boot/setup tools/system tools/build
-	cp -f tools/system system.tmp
-	strip system.tmp
-	objcopy -O binary -R .note -R .comment system.tmp tools/kernel
-	tools/build boot/bootsect boot/setup tools/kernel $(ROOT_DEV) > Image
-	rm system.tmp
-	rm tools/kernel -f
-	sync
+    cp -f tools/system system.tmp
+    strip system.tmp
+    objcopy -O binary -R .note -R .comment system.tmp tools/kernel
+    tools/build boot/bootsect boot/setup tools/kernel $(ROOT_DEV) > Image
+    rm system.tmp
+    rm tools/kernel -f
+    sync
 
 disk: Image
-	dd bs=8192 if=Image of=/dev/fd0
+    dd bs=8192 if=Image of=/dev/fd0
 
 BootImage: boot/bootsect boot/setup tools/build
-	tools/build boot/bootsect boot/setup none $(ROOT_DEV) > Image
-	sync
+    tools/build boot/bootsect boot/setup none $(ROOT_DEV) > Image
+    sync
 
 tools/build: tools/build.c
-	gcc $(CFLAGS) \
-	-o tools/build tools/build.c
+    gcc $(CFLAGS) \
+    -o tools/build tools/build.c
 
 boot/head.o: boot/head.s
-	gcc-3.4 -m32 -g -I./include -traditional -c boot/head.s
-	mv head.o boot/
+    gcc-3.4 -m32 -g -I./include -traditional -c boot/head.s
+    mv head.o boot/
 
 tools/system:	boot/head.o init/main.o \
-		$(ARCHIVES) $(DRIVERS) $(MATH) $(LIBS)
-	$(LD) $(LDFLAGS) boot/head.o init/main.o \
-	$(ARCHIVES) \
-	$(DRIVERS) \
-	$(MATH) \
-	$(LIBS) \
-	-o tools/system 
-	nm tools/system | grep -v '\(compiled\)\|\(\.o$$\)\|\( [aU] \)\|\(\.\.ng$$\)\|\(LASH[RL]DI\)'| sort > System.map 
+        $(ARCHIVES) $(DRIVERS) $(MATH) $(LIBS)
+    $(LD) $(LDFLAGS) boot/head.o init/main.o \
+    $(ARCHIVES) \
+    $(DRIVERS) \
+    $(MATH) \
+    $(LIBS) \
+    -o tools/system 
+    nm tools/system | grep -v '\(compiled\)\|\(\.o$$\)\|\( [aU] \)\|\(\.\.ng$$\)\|\(LASH[RL]DI\)'| sort > System.map 
 
 kernel/math/math.a: FORCE
-	(cd kernel/math; make)
+    (cd kernel/math; make)
 
 kernel/blk_drv/blk_drv.a: FORCE
-	(cd kernel/blk_drv; make)
+    (cd kernel/blk_drv; make)
 
 kernel/chr_drv/chr_drv.a: FORCE
-	(cd kernel/chr_drv; make)
+    (cd kernel/chr_drv; make)
 
 kernel/kernel.o: FORCE
-	(cd kernel; make)
+    (cd kernel; make)
 
 mm/mm.o: FORCE
-	(cd mm; make)
+    (cd mm; make)
 
 fs/fs.o: FORCE
-	(cd fs; make)
+    (cd fs; make)
 
 lib/lib.a: FORCE
-	(cd lib; make)
+    (cd lib; make)
 
 boot/setup: boot/setup.s
-	$(AS86) -o boot/setup.o boot/setup.s
-	$(LD86) -s -o boot/setup boot/setup.o
+    $(AS86) -o boot/setup.o boot/setup.s
+    $(LD86) -s -o boot/setup boot/setup.o
 
 boot/bootsect:	boot/bootsect.s
-	$(AS86) -o boot/bootsect.o boot/bootsect.s
-	$(LD86) -s -o boot/bootsect boot/bootsect.o
+    $(AS86) -o boot/bootsect.o boot/bootsect.s
+    $(LD86) -s -o boot/bootsect boot/bootsect.o
 
 tmp.s:	boot/bootsect.s tools/system
-	(echo -n "SYSSIZE = (";ls -l tools/system | grep system \
-		| cut -c25-31 | tr '\012' ' '; echo "+ 15 ) / 16") > tmp.s
-	cat boot/bootsect.s >> tmp.s
+    (echo -n "SYSSIZE = (";ls -l tools/system | grep system \
+        | cut -c25-31 | tr '\012' ' '; echo "+ 15 ) / 16") > tmp.s
+    cat boot/bootsect.s >> tmp.s
 
 clean:
-	rm -f Image System.map tmp_make core boot/bootsect boot/setup
-	rm -f init/*.o tools/system tools/build boot/*.o
-	(cd mm;make clean)
-	(cd fs;make clean)
-	(cd kernel;make clean)
-	(cd lib;make clean)
+    rm -f Image System.map tmp_make core boot/bootsect boot/setup
+    rm -f init/*.o tools/system tools/build boot/*.o
+    (cd mm;make clean)
+    (cd fs;make clean)
+    (cd kernel;make clean)
+    (cd lib;make clean)
 
 backup: clean
-	(cd .. ; tar cf - linux | compress16 - > backup.Z)
-	sync
+    (cd .. ; tar cf - linux | compress16 - > backup.Z)
+    sync
 
 dep:
-	sed '/\#\#\# Dependencies/q' < Makefile > tmp_make
-	(for i in init/*.c;do echo -n "init/";$(CPP) -M $$i;done) >> tmp_make
-	cp tmp_make Makefile
-	(cd fs; make dep)
-	(cd kernel; make dep)
-	(cd mm; make dep)
+    sed '/\#\#\# Dependencies/q' < Makefile > tmp_make
+    (for i in init/*.c;do echo -n "init/";$(CPP) -M $$i;done) >> tmp_make
+    cp tmp_make Makefile
+    (cd fs; make dep)
+    (cd kernel; make dep)
+    (cd mm; make dep)
 
 # Force make run into subdirectories even no changes on source
 FORCE:

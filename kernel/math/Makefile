@@ -12,32 +12,32 @@ LD	=ld
 LDFLAGS	=-m elf_i386 -x
 CC	=gcc-3.4 -march=i386
 CFLAGS	=-m32 -g -Wall -O -fstrength-reduce -fomit-frame-pointer \
-	-finline-functions -nostdinc -I../../include
+    -finline-functions -nostdinc -I../../include
 CPP	=gcc-3.4 -E -nostdinc -I../../include
 
 .c.s:
-	$(CC) $(CFLAGS) \
-	-S -o $*.s $<
+    $(CC) $(CFLAGS) \
+    -S -o $*.s $<
 .s.o:
-	$(AS) -o $*.o $<
+    $(AS) -o $*.o $<
 .c.o:
-	$(CC) $(CFLAGS) \
-	-c -o $*.o $<
+    $(CC) $(CFLAGS) \
+    -c -o $*.o $<
 
 OBJS  = math_emulate.o
 
 math.a: $(OBJS)
-	$(AR) rcs math.a $(OBJS)
-	sync
+    $(AR) rcs math.a $(OBJS)
+    sync
 
 clean:
-	rm -f core *.o *.a tmp_make
-	for i in *.c;do rm -f `basename $$i .c`.s;done
+    rm -f core *.o *.a tmp_make
+    for i in *.c;do rm -f `basename $$i .c`.s;done
 
 dep:
-	sed '/\#\#\# Dependencies/q' < Makefile > tmp_make
-	(for i in *.c;do echo -n `echo $$i | sed 's,\.c,\.s,'`" "; \
-		$(CPP) -M $$i;done) >> tmp_make
-	cp tmp_make Makefile
+    sed '/\#\#\# Dependencies/q' < Makefile > tmp_make
+    (for i in *.c;do echo -n `echo $$i | sed 's,\.c,\.s,'`" "; \
+        $(CPP) -M $$i;done) >> tmp_make
+    cp tmp_make Makefile
 
 ### Dependencies:

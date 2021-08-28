@@ -135,10 +135,10 @@ type name(void) \
 { \
 long __res; \
 __asm__ volatile ("int $0x80" \
-	: "=a" (__res) \
-	: "0" (__NR_##name)); \
+    : "=a" (__res) \
+    : "0" (__NR_##name)); \
 if (__res >= 0) \
-	return (type) __res; \
+    return (type) __res; \
 errno = -__res; \
 return -1; \
 }
@@ -148,10 +148,10 @@ type name(atype a) \
 { \
 long __res; \
 __asm__ volatile ("int $0x80" \
-	: "=a" (__res) \
-	: "0" (__NR_##name),"b" ((long)(a))); \
+    : "=a" (__res) \
+    : "0" (__NR_##name),"b" ((long)(a))); \
 if (__res >= 0) \
-	return (type) __res; \
+    return (type) __res; \
 errno = -__res; \
 return -1; \
 }
@@ -161,10 +161,10 @@ type name(atype a,btype b) \
 { \
 long __res; \
 __asm__ volatile ("int $0x80" \
-	: "=a" (__res) \
-	: "0" (__NR_##name),"b" ((long)(a)),"c" ((long)(b))); \
+    : "=a" (__res) \
+    : "0" (__NR_##name),"b" ((long)(a)),"c" ((long)(b))); \
 if (__res >= 0) \
-	return (type) __res; \
+    return (type) __res; \
 errno = -__res; \
 return -1; \
 }
@@ -174,10 +174,10 @@ type name(atype a,btype b,ctype c) \
 { \
 long __res; \
 __asm__ volatile ("int $0x80" \
-	: "=a" (__res) \
-	: "0" (__NR_##name),"b" ((long)(a)),"c" ((long)(b)),"d" ((long)(c))); \
+    : "=a" (__res) \
+    : "0" (__NR_##name),"b" ((long)(a)),"c" ((long)(b)),"d" ((long)(c))); \
 if (__res>=0) \
-	return (type) __res; \
+    return (type) __res; \
 errno=-__res; \
 return -1; \
 }
